@@ -1,0 +1,120 @@
+### Anthropic Claude
+
+POST https://api.anthropic.com/v1/complete HTTP/1.1
+Anthropic-Version: 2023-06-01
+Content-Type: application/json
+X-Api-Key: {{CLAUDE_TOKEN}}
+
+{
+  "model": "claude-2.1",
+  "max_tokens_to_sample": 1024,
+  "prompt": "Human: Show me an example of a simple Typescript program.\n\nAssistant:"
+}
+
+### Gemini
+
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={{GEMINI_API_KEY}} HTTP/1.1
+Content-Type: application/json
+
+{ "contents": [{ "parts": [{ "text": "Explain how AI works" }] }] }
+
+### ali deepseek r1
+
+# curl -X POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions -H "Authorization: Bearer $DASHSCOPE_API_KEY" -H "Content-Type: application/json" -d '{ "model": "deepseek-r1", "messages": [ { "role": "user", "content": "9.9和9.11谁大" } ] }'
+POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions HTTP/1.1
+Authorization: Bearer $DASHSCOPE_API_KEY
+Content-Type: application/json
+
+{
+  "model": "deepseek-r1",
+  "messages": [{ "role": "user", "content": "9.9和9.11谁大" }]
+}
+
+### ali tongyi
+# curl -X POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions -H "Authorization: Bearer $DASHSCOPE_API_KEY" -H "Content-Type: application/json" -d '{ "model": "qwen-omni-turbo", "messages": [ { "role": "user", "content": "你是谁？" } ], "stream":true, "stream_options":{ "include_usage":true }, "modalities":["text"], }'
+POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions HTTP/1.1
+Authorization: Bearer {{DASHSCOPE_API_KEY}}
+Content-Type: application/json
+
+{
+  "model": "qwen-omni-turbo",
+  "messages": [
+    {
+      "role": "user",
+      "content": "你是谁？"
+    }
+  ],
+  "stream": true,
+  "stream_options": {
+    "include_usage": true
+  },
+  "modalities": ["text"]
+}
+
+### ali deepseek-r1
+# curl -X POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions -H "Authorization: Bearer $DASHSCOPE_API_KEY" -H "Content-Type: application/json" -d '{ "model": "deepseek-r1", "messages": [ { "role": "user", "content": "9.9和9.11谁大" } ] }'
+POST https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions HTTP/1.1
+Authorization: Bearer {{DASHSCOPE_API_KEY}}
+Content-Type: application/json
+
+{
+  "model": "deepseek-r1",
+  "messages": [{ "role": "user", "content": "9.9和9.11谁大" }]
+}
+
+###
+
+# curl https://api.x.ai/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer xai-xh4LpB26EUY3Co6X8NMph6MNTX59M6VPbwBSaYGeNdXnPDhgiuCOykVXEhNhi3asjcwJNvsNFS1IkOx4" -d '{ "messages": [ { "role": "system", "content": "You are a test assistant." }, { "role": "user", "content": "Testing. Just say hi and hello world and nothing else." } ], "model": "grok-2-latest", "stream": false, "temperature": 0 }'
+POST https://api.x.ai/v1/chat/completions HTTP/1.1
+Authorization: Bearer {{XAI_API_KEY}}
+Content-Type: application/json
+
+{
+  "messages": [
+    { "role": "system", "content": "You are a test assistant." },
+    {
+      "role": "user",
+      "content": "Testing. Just say hi and hello world and nothing else."
+    }
+  ],
+  "model": "grok-2-latest",
+  "stream": false,
+  "temperature": 0
+}
+
+###
+@MODEL=claude-3-7-sonnet@20250219
+@LOCATION=us-east5
+@PROJECT_ID=cloudk8s-c777
+
+< {%
+  // Pre-request script to get the token
+  const { execSync } = require('child_process');
+  const token = execSync('gcloud auth print-access-token').toString().trim();
+  
+  // Set request-scoped variable
+  request.variables.set('GCLOUD_TOKEN', token);
+  
+  console.log('Pre-request token set:', token);
+%}
+# curl -X POST -H "Authorization: Bearer $(gcloud auth print-access-token)" -H "Content-Type: application/json; charset=utf-8" -d @request.json "https://$LOCATION-aiplatform.googleapis.com/v1/projects/$PROJECT_ID/locations/$LOCATION/publishers/anthropic/models/$MODEL:streamRawPredict" 
+POST https://{{LOCATION}}-aiplatform.googleapis.com/v1/projects/{{PROJECT_ID}}/locations/{{LOCATION}}/publishers/anthropic/models/{{MODEL}}:streamRawPredict
+authorization: Bearer {{GCLOUD_TOKEN}}
+content-type: application/json; charset=utf-8
+
+{
+  "anthropic_version": "vertex-2023-10-16",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Hello claude-3-7-sonnet"
+        }
+      ]
+    }
+  ],
+  "max_tokens": 256,
+  "stream": true
+}
